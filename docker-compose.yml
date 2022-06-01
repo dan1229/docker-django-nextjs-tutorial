@@ -2,6 +2,8 @@ version: '3'
 services:
   # CLIENT
   client_app_name:
+    # the 'app_name' is required if you want to use
+    # this across multiple projects
     container_name: client_app_name
     restart: always
     build:
@@ -9,25 +11,25 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - server_app_name
-    volumes:
+    volumes:  # folders to map from host:container
       - ./client:/client
       - /var/run/docker.sock:/var/run/docker.sock
       - node-modules:/client/node_modules
     ports:
-      - "3000:3000"
+      - "3000:3000"  # expose the port to other containers
     networks:
-      - core
+      - core  # virtual network name to connect to
     links:
       - server:server
-    entrypoint: /client/entrypoint.sh
+    entrypoint: /client/entrypoint.sh  # similar to CMD
 
 
   # SERVER
   server_app_name:
     container_name: server_app_name
     build:
-      context: .
-      dockerfile: server/Dockerfile
+      context: ./server
+      dockerfile: Dockerfile
     env_file: ./server/.env
     depends_on:
       - db_app_name
@@ -49,8 +51,8 @@ services:
   db_app_name:
     container_name: db_app_name
     restart: always
-    image: postgres:14-alpine
-    environment:
+    image: postgres:14-alpine  # Docker image - not Dockerfile
+    environment:  # manually set environment variables
       - POSTGRES_DB=dans_backend
       - POSTGRES_USER=dans_backend
       - POSTGRES_PASSWORD=dans_backend
@@ -81,10 +83,10 @@ services:
       - core
 
 
-networks:
+networks:  # declare networks
   core:
 
-volumes:
+volumes:  # declare volumes
   node-modules:
   static:
   static-debug:
