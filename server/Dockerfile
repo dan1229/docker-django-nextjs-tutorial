@@ -14,12 +14,10 @@ RUN apk add --no-cache --virtual .build-deps ca-certificates gcc postgresql-dev 
 
 WORKDIR /app/server
 COPY ../Pipfile ../Pipfile.lock /app/server/
-RUN echo 'export `python3 /usr/src/keygenerator.py`' >> ~/.bashrc
 RUN pip install --upgrade pip
-ADD . /app/server
 RUN pip install pipenv
 RUN pipenv install --system --deploy --ignore-pipfile
-COPY . /app/server/
+COPY ./server /app/server/
 ENV IN_DOCKER True
 
 
