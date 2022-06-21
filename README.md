@@ -17,7 +17,7 @@ Services Used
 
 
 ### Blog Post
-http://blog.danielnazarian.com/blog/posts/1f65fa99-51a0-4396-8f8a-7d44165039b5
+http://blog.danielnazarian.com/blog/posts/9e91a1d5-5bb3-4a8f-b7b2-1f603b250902/
 
 
 -------------------------------------------------------
