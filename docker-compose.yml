@@ -1,92 +1,63 @@
 version: '3'
 services:
   # CLIENT
-  client_app_name:
-    # the 'app_name' is required if you want to use
-    # this across multiple projects
-    container_name: client_app_name
+  client_dans_backend:
+    container_name: client_dans_backend
     restart: always
+    env_file:
+      - ./client/.env.local
     build:
       context: ./client
       dockerfile: Dockerfile
     depends_on:
-      - server_app_name
-    volumes:  # folders to map from host:container
-      - ./client:/client
-      - /var/run/docker.sock:/var/run/docker.sock
-      - node-modules:/client/node_modules
+      - server_dans_backend
     ports:
-      - "3000:3000"  # expose the port to other containers
-    networks:
-      - core  # virtual network name to connect to
+      - "3000:3000"
     links:
-      - server:server
-    entrypoint: /client/entrypoint.sh  # similar to CMD
+      - server_dans_backend:server_dans_backend
+    entrypoint: /client/entrypoint.sh
 
 
   # SERVER
-  server_app_name:
-    container_name: server_app_name
+  server_dans_backend:
+    container_name: server_dans_backend
     build:
-      context: ./server
-      dockerfile: Dockerfile
-    env_file: ./server/.env
+      context: .  # declaring the current (root) dir as the context so we can access "Pipfile"
+      dockerfile: server/Dockerfile
+    env_file:  # setting env file for local development
+      - ./server/.env
     depends_on:
-      - db_app_name
-    volumes:
-      - ./server:/app/server
-      - /var/run/docker.sock:/var/run/docker.sock
-      - static:/app/server/static
-      - static-debug:/app/server/static-debug
+      - db_dans_backend
     ports:
       - "8000:8000"
-    networks:
-      - core
     links:
-      - db_app_name:db_app_name
+      - db_dans_backend:db_dans_backend
     entrypoint: /app/server/entrypoint.sh
 
 
-  # Database
-  db_app_name:
-    container_name: db_app_name
+  # DATABASE
+  db_dans_backend:
+    container_name: db_dans_backend
     restart: always
-    image: postgres:14-alpine  # Docker image - not Dockerfile
-    environment:  # manually set environment variables
+    image: postgres:14-alpine
+    environment:
       - POSTGRES_DB=dans_backend
       - POSTGRES_USER=dans_backend
       - POSTGRES_PASSWORD=dans_backend
       - POSTGRES_HOST=db_dans_backend
-    networks:
-      - core
     ports:
       - "5432:5432"
-    volumes:
-      - ./server/dump.sql:/docker-entrypoint-initdb.d/dump.sql
 
 
-  # PROXY SERVER
-  nginx_app_name:
-    container_name: nginx_app_name
+  # NGINX SERVER
+  nginx_dans_backend:
+    container_name: nginx_dans_backend
     build:
-      context: nginx/development
+      context: nginx/default
       dockerfile: Dockerfile
-    volumes:
-      - static:/app/server/static
-      - static-debug:/app/server/static-debug
     ports:
       - "80:80"
     links:
-      - server_app_name
-      - client_app_name
-    networks:
-      - core
+      - server_dans_backend
+      - client_dans_backend
 
-
-networks:  # declare networks
-  core:
-
-volumes:  # declare volumes
-  node-modules:
-  static:
-  static-debug:
