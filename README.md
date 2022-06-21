@@ -10,14 +10,14 @@ This repo is meant to give a simplified example of a Docker environment/set up f
 Please note, this config is **NOT** production ready. This should be treated as a dev environment workflow or a starting point for production.
 
 Services Used
-- Django
+- Django (Python)
 - NextJS (Node)
 - NGinx
 - Postgres
 
 
 ### Blog Post
-TODO - add link
+http://blog.danielnazarian.com/blog/posts/9e91a1d5-5bb3-4a8f-b7b2-1f603b250902/
 
 
 -------------------------------------------------------
